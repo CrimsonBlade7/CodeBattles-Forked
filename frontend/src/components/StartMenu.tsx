@@ -58,7 +58,7 @@ export function StartMenu({ emitJoinRoom, connected }: StartMenuProps) {
 
           <div>
             <label htmlFor="roomCode" className="block text-sm font-medium mb-2">
-              Room Code (any code works)
+              Room Code
             </label>
             <input
               id="roomCode"
