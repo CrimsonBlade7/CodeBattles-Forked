@@ -2,6 +2,8 @@
 
 A real-time multiplayer game built with React (Vite) frontend and Flask backend using Socket.IO for real-time communication.
 
+For the full commit history, visit https://github.com/moromorad/NewCodeBattles (we had issues with merging branches, so we decided to wipe it and put it in a new repository)
+
 ## Tech Stack
 
 ### Frontend
@@ -17,7 +19,6 @@ A real-time multiplayer game built with React (Vite) frontend and Flask backend 
 
 ### Networking
 - **Local IP (0.0.0.0)**: Connect devices on same Wi-Fi network
-- **Ngrok**: Public tunnel for remote access when local network isn't available
 
 ## Setup Instructions
 
@@ -25,7 +26,6 @@ A real-time multiplayer game built with React (Vite) frontend and Flask backend 
 
 - **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
 - **Python** (v3.8 or higher) - [Download](https://www.python.org/)
-- **Ngrok** (optional) - [Download](https://ngrok.com/download)
 
 ### Frontend Setup
 
@@ -120,37 +120,6 @@ The backend server is configured to listen on `0.0.0.0:5000`, which means it acc
    - Frontend: `http://YOUR_LOCAL_IP:5173` (if you configure Vite to allow network access)
    - Or each person runs the frontend locally and just connects to your backend IP
 
-### Using Ngrok (Remote Access)
-
-If local network access isn't working or you need remote access:
-
-1. **Install Ngrok**: Download from [ngrok.com](https://ngrok.com/download) and add to your PATH
-
-2. **Start your backend server** (if not already running):
-   ```bash
-   cd backend
-   python app.py
-   ```
-
-3. **In a new terminal, start ngrok**:
-   ```bash
-   ngrok http 5000
-   ```
-
-4. **Copy the ngrok HTTPS URL** (looks like `https://abc123.ngrok.io`)
-
-5. **Update frontend `.env`**:
-   ```
-   VITE_SOCKET_URL=https://YOUR_NGROK_URL
-   ```
-   Replace `YOUR_NGROK_URL` with your actual ngrok URL (e.g., `https://abc123.ngrok.io`)
-
-6. **Restart the frontend** to pick up the new environment variable
-
-7. **Share the ngrok URL** with your team members - they should update their `.env` files too
-
-**Note**: Free ngrok URLs change each time you restart ngrok. For a stable URL, consider ngrok's paid plans.
-
 ## Project Structure
 
 ```
@@ -210,12 +179,7 @@ CodeBattles-nwHacks2026/
 - Verify backend is running on port 5000
 - Check `VITE_SOCKET_URL` in `.env` matches your backend URL
 - Ensure CORS is enabled on backend (already configured)
-- Check firewall settings if using local IP
-
-### Ngrok connection issues
-- Make sure backend is running before starting ngrok
-- Use HTTPS URL from ngrok (not HTTP)
-- Update `.env` file and restart frontend after changing URL
+- Check firewall settings if using a local IP
 
 ### Multiple players not syncing
 - Verify all clients are connected to the same backend URL
