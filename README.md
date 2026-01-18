@@ -2,6 +2,8 @@
 
 A real-time multiplayer game built with React (Vite) frontend and Flask backend using Socket.IO for real-time communication.
 
+for commit history visit https://github.com/moromorad/NewCodeBattles (we had issues with merging branches so we decided to wipe it and put it in a new repository)
+
 ## Tech Stack
 
 ### Frontend
