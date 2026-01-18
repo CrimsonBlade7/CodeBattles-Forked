@@ -36,7 +36,7 @@ export function StartMenu({ emitJoinRoom, connected }: StartMenuProps) {
           <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-600 bg-clip-text text-transparent">
             CodeBattles
           </h1>
-          <p className="text-gray-400">LeetCode Party Game</p>
+          <p className="text-gray-400">Speed Coding Party Game</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg p-6 space-y-6">
