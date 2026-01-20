@@ -27,7 +27,7 @@ from .utils import execute_code
 def handle_connect():
     """Called when a client opens a connection."""
     print(f'Client connected: {request.sid}')
-    emit('connected', {'socket Id': request.sid})
+    emit('connected', {'socketId': request.sid})
 
 @socketio.on('disconnect')
 def handle_disconnect():
