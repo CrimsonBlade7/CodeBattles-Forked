@@ -23,11 +23,40 @@ export function Lobby({ emitStartGame }: LobbyProps) {
 
     const handleCopyRoomCode = async () => {
         try {
-            await navigator.clipboard.writeText(roomCode)
-            setCopied(true)
-            setTimeout(() => setCopied(false), 2000)
+            // Check if clipboard API is available
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(roomCode)
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2000)
+            } else {
+                // Fallback: Create temporary textarea for copying
+                const textArea = document.createElement('textarea')
+                textArea.value = roomCode
+                textArea.style.position = 'fixed'
+                textArea.style.left = '-9999px'
+                textArea.style.top = '0'
+                document.body.appendChild(textArea)
+                textArea.focus()
+                textArea.select()
+
+                try {
+                    const successful = document.execCommand('copy')
+                    if (successful) {
+                        setCopied(true)
+                        setTimeout(() => setCopied(false), 2000)
+                    } else {
+                        throw new Error('execCommand copy was unsuccessful')
+                    }
+                } catch (err) {
+                    console.error('Fallback copy failed:', err)
+                    alert(`Failed to copy automatically. Please copy manually: ${roomCode}`)
+                }
+
+                document.body.removeChild(textArea)
+            }
         } catch (err) {
             console.error('Failed to copy:', err)
+            alert(`Failed to copy automatically. Please copy manually: ${roomCode}`)
         }
     }
 

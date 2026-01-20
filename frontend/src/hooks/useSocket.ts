@@ -73,6 +73,14 @@ export const useSocket = () => {
             syncGameState({ players: updatedPlayers })
         })
 
+        // Listen for join errors
+        newSocket.on('join_error', (data: { message: string }) => {
+            console.error('[Socket] Join error:', data.message)
+            alert(`Failed to join: ${data.message}`)
+            // Reset to menu so user can try again
+            useGameStore.getState().setGameStatus('menu')
+        })
+
         // Listen for game started
         newSocket.on('game_started', (data: { players: Record<string, Player> }) => {
             setGameStatus('playing')
