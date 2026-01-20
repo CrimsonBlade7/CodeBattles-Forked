@@ -19,6 +19,7 @@ export function GameScreen({ emitSelectCard, emitSubmitSolution, emitPlayerElimi
         players,
         currentPlayerId,
         selectedCardId,
+        roomCode,
         selectCard,
         updatePlayer,
         gameStatus
@@ -386,6 +387,12 @@ export function GameScreen({ emitSelectCard, emitSubmitSolution, emitPlayerElimi
 
             {/* Left Sidebar - Player Health Bars */}
             <div className="w-80 bg-gray-800 border-r border-gray-700 p-4 overflow-y-auto">
+                {roomCode && (
+                    <div className="mb-4 p-3 bg-gradient-to-r from-purple-900/50 to-blue-900/50 rounded-lg text-center">
+                        <p className="text-xs text-gray-400">Room</p>
+                        <p className="font-mono font-bold text-lg tracking-wider">{roomCode}</p>
+                    </div>
+                )}
                 <h2 className="text-xl font-semibold mb-4">Players</h2>
                 {Object.values(players).map((player) => (
                     <PlayerHealthBar

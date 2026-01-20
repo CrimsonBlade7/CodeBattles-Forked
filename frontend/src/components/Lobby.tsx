@@ -1,66 +1,105 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useGameStore } from '../store/gameStore'
 
 interface LobbyProps {
-  emitStartGame: () => void
+    emitStartGame: () => void
 }
 
 export function Lobby({ emitStartGame }: LobbyProps) {
-  const { players, currentPlayerId, gameStatus, setGameStatus } = useGameStore()
-  const playerList = Object.values(players)
+    const { players, currentPlayerId, gameStatus, roomCode } = useGameStore()
+    const playerList = Object.values(players)
+    const [copied, setCopied] = useState(false)
 
-  // Navigate to game screen when game starts
-  useEffect(() => {
-    if (gameStatus === 'playing') {
-      // Navigation happens via App.tsx routing
+    // Navigate to game screen when game starts
+    useEffect(() => {
+        if (gameStatus === 'playing') {
+            // Navigation happens via App.tsx routing
+        }
+    }, [gameStatus])
+
+    const handleStartGame = () => {
+        emitStartGame()
     }
-  }, [gameStatus])
 
-  const handleStartGame = () => {
-    emitStartGame()
-  }
+    const handleCopyRoomCode = async () => {
+        try {
+            await navigator.clipboard.writeText(roomCode)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000)
+        } catch (err) {
+            console.error('Failed to copy:', err)
+        }
+    }
 
-  const isHost = currentPlayerId && playerList.length > 0 && playerList[0].id === currentPlayerId
+    const isHost = currentPlayerId && playerList.length > 0 && playerList[0].id === currentPlayerId
 
-  return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center">Game Lobby</h1>
+    return (
+        <div className="min-h-screen bg-gray-900 text-white p-8">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="text-4xl font-bold mb-8 text-center">Game Lobby</h1>
 
-        <div className="bg-gray-800 rounded-lg p-6 mb-6">
-          <h2 className="text-2xl font-semibold mb-4">Players ({playerList.length})</h2>
-          <div className="space-y-2">
-            {playerList.map((player) => (
-              <div
-                key={player.id}
-                className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg"
-              >
-                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span className="font-medium">{player.username}</span>
-                {player.id === currentPlayerId && (
-                  <span className="text-xs text-blue-400">(You)</span>
+                {/* Room Code Display */}
+                {roomCode && (
+                    <div className="bg-gradient-to-r from-purple-900 to-blue-900 rounded-lg p-6 mb-6 text-center">
+                        <p className="text-sm text-gray-300 mb-2">Room Code</p>
+                        <div className="flex items-center justify-center gap-4">
+                            <h2 className="text-4xl font-bold tracking-widest font-mono">{roomCode}</h2>
+                            <button
+                                onClick={handleCopyRoomCode}
+                                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                                title="Copy room code"
+                            >
+                                {copied ? (
+                                    <>
+                                        <span>✓</span>
+                                        <span>Copied!</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>📋</span>
+                                        <span>Copy</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">Share this code with friends to join</p>
+                    </div>
                 )}
-              </div>
-            ))}
-          </div>
-        </div>
 
-        <div className="text-center">
-          {isHost ? (
-            <button
-              onClick={handleStartGame}
-              disabled={playerList.length < 1}
-              className="px-8 py-4 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Start Game
-            </button>
-          ) : (
-            <div className="text-gray-400">
-              Waiting for host to start the game...
+                <div className="bg-gray-800 rounded-lg p-6 mb-6">
+                    <h2 className="text-2xl font-semibold mb-4">Players ({playerList.length})</h2>
+                    <div className="space-y-2">
+                        {playerList.map((player) => (
+                            <div
+                                key={player.id}
+                                className="flex items-center gap-3 p-3 bg-gray-700 rounded-lg"
+                            >
+                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span className="font-medium">{player.username}</span>
+                                {player.id === currentPlayerId && (
+                                    <span className="text-xs text-blue-400">(You)</span>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="text-center">
+                    {isHost ? (
+                        <button
+                            onClick={handleStartGame}
+                            disabled={playerList.length < 1}
+                            className="px-8 py-4 bg-green-600 hover:bg-green-700 rounded-lg font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            Start Game
+                        </button>
+                    ) : (
+                        <div className="text-gray-400">
+                            Waiting for host to start the game...
+                        </div>
+                    )}
+                </div>
             </div>
-          )}
         </div>
-      </div>
-    </div>
-  )
+    )
 }
