@@ -1,9 +1,10 @@
 interface DebugMenuProps {
     onTriggerReward: (rewardType: string) => void
+    onSkipCard: () => void
     onClose: () => void
 }
 
-export function DebugMenu({ onTriggerReward, onClose }: DebugMenuProps) {
+export function DebugMenu({ onTriggerReward, onSkipCard, onClose }: DebugMenuProps) {
     return (
         <div className="fixed bottom-16 right-4 bg-gray-800 border-2 border-purple-500 rounded-lg p-4 shadow-2xl z-50 max-w-xs">
             <div className="flex justify-between items-center mb-3">
@@ -16,6 +17,13 @@ export function DebugMenu({ onTriggerReward, onClose }: DebugMenuProps) {
                 </button>
             </div>
             <div className="space-y-2">
+                <button
+                    onClick={onSkipCard}
+                    className="w-full px-3 py-2 bg-purple-600 hover:bg-purple-700 rounded text-sm font-semibold transition-colors"
+                >
+                    ⏭️ Skip Current Card
+                </button>
+
                 <button
                     onClick={() => onTriggerReward('add_time')}
                     className="w-full px-3 py-2 bg-green-600 hover:bg-green-700 rounded text-sm font-semibold transition-colors"

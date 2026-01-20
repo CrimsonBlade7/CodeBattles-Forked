@@ -21,7 +21,7 @@ export const useSocket = () => {
 
   useEffect(() => {
     const newSocket = io(SOCKET_URL, {
-      transports: ['polling', 'websocket'], // Try polling first for ngrok stability
+      transports: ['polling', 'websocket'],
     })
 
     newSocket.on('connect', () => {
