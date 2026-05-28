@@ -17,7 +17,7 @@ from .game_state import (
     get_or_create_room, get_room, delete_room_if_empty,
     generate_card, apply_reward, check_win_condition
 )
-from .utils import execute_code
+# Client-side judging (Pyodide) sends results to server for demo mode.
 
 # --------------------------
 # CONNECTION EVENTS
@@ -212,7 +212,7 @@ def handle_select_card(data):
 
 @socketio.on('submit_solution')
 def handle_submit_solution(data):
-    """Player submitted code."""
+    """Player submitted code + client-side test result (demo mode)."""
     socket_id = request.sid
     if socket_id not in socket_to_player: return
     
@@ -221,7 +221,9 @@ def handle_submit_solution(data):
     if not room: return
     
     card_id = data.get('cardId')
-    code = data.get('code', '')
+    passed = bool(data.get('passed', False))
+    test_results = data.get('testResults', [])
+    error = data.get('error', None)
     
     if player_id not in room['players']: return
     player = room['players'][player_id]
@@ -239,10 +241,7 @@ def handle_submit_solution(data):
         emit('error', {'message': 'Card is not currently selected'})
         return
     
-    # Execute code
-    result = execute_code(code, card['problem']['functionSignature'], card['problem']['testCases'])
-    
-    if result['passed']:
+    if passed:
         # Remove card, clear selection
         player['cards'] = [c for c in player['cards'] if c['id'] != card_id]
         player['currentProblem'] = None
@@ -258,7 +257,7 @@ def handle_submit_solution(data):
         emit('solution_passed', {
             'playerId': player_id,
             'cardId': card_id,
-            'testResults': result['testResults'],
+            'testResults': test_results,
             'newCard': new_card
         }, room=room_code)
         
@@ -267,8 +266,8 @@ def handle_submit_solution(data):
         emit('solution_failed', {
             'playerId': player_id,
             'cardId': card_id,
-            'error': result['error'],
-            'testResults': result['testResults']
+            'error': error,
+            'testResults': test_results
         }, room=room_code)
 
 

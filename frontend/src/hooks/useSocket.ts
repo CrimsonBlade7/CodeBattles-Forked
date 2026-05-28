@@ -2,7 +2,8 @@ import { useEffect, useState, useCallback } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { useGameStore, Player, ProblemCard } from '../store/gameStore'
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'
+const RAW_SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'
+const SOCKET_URL = RAW_SOCKET_URL.replace(/\/+$/, '')
 
 export const useSocket = () => {
     const [socket, setSocket] = useState<Socket | null>(null)
@@ -217,11 +218,11 @@ export const useSocket = () => {
         }
     }, [socket])
 
-    const emitSubmitSolution = useCallback((cardId: string, code: string) => {
+    const emitSubmitSolution = useCallback((cardId: string, payload: { code: string; passed: boolean; testResults: any[]; error: string | null }) => {
         if (socket?.connected) {
             const playerId = useGameStore.getState().currentPlayerId
             if (playerId) {
-                socket.emit('submit_solution', { cardId, code, playerId })
+                socket.emit('submit_solution', { cardId, playerId, ...payload })
             }
         }
     }, [socket])

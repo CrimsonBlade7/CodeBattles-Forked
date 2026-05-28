@@ -6,10 +6,11 @@ import { CodeEditor } from './CodeEditor'
 import { TestFeedback } from './TestFeedback'
 import { PlayerSelectionModal } from './PlayerSelectionModal'
 import { DebugMenu } from './DebugMenu'
+import { judgePythonSubmission } from '../judge/pyJudge'
 
 interface GameScreenProps {
     emitSelectCard: (cardId: string) => void
-    emitSubmitSolution: (cardId: string, code: string) => void
+    emitSubmitSolution: (cardId: string, payload: { code: string; passed: boolean; testResults: any[]; error: string | null }) => void
     emitPlayerEliminated: () => void
     socket: any // Socket instance for listening to events
 }
@@ -181,14 +182,31 @@ export function GameScreen({ emitSelectCard, emitSubmitSolution, emitPlayerElimi
         }
     }
 
-    const handleSubmitSolution = (code: string) => {
+    const handleSubmitSolution = async (code: string) => {
         if (!selectedCardId || !currentPlayerId) return
 
         // Clear any previous feedback
         setTestFeedback({ type: null, message: '' })
 
-        // Emit to backend - backend handles code execution, card removal, and new card addition
-        emitSubmitSolution(selectedCardId, code)
+        if (!selectedCard) return
+
+        setTestFeedback({ type: null, message: 'Running tests locally...' })
+        const judge = await judgePythonSubmission({ code, card: selectedCard })
+
+        // Backend will trust client result (demo mode)
+        emitSubmitSolution(selectedCardId, {
+            code,
+            passed: judge.passed,
+            testResults: judge.testResults,
+            error: judge.error
+        })
+
+        if (!judge.passed) {
+            setTestFeedback({
+                type: 'error',
+                message: judge.error || 'Tests failed. Check your code and try again.'
+            })
+        }
     }
 
     const handleTargetSelect = (targetId: string) => {

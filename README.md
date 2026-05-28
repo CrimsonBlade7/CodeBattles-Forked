@@ -26,6 +26,7 @@ For the full commit history, visit https://github.com/moromorad/NewCodeBattles (
 
 - **Node.js** (v18 or higher) - [Download](https://nodejs.org/)
 - **Python** (v3.8 or higher) - [Download](https://www.python.org/)
+- A modern browser (for in-browser Python judging via WebAssembly)
 
 ### Frontend Setup
 
@@ -85,7 +86,12 @@ For the full commit history, visit https://github.com/moromorad/NewCodeBattles (
    python app.py
    ```
 
-   The backend will be available at `http://localhost:5000` (or `http://0.0.0.0:5000` for network access)
+   The backend will be available at `http://localhost:5000` (or `http://0.0.0.0:5000` for network access).
+   If you copied `backend/.env.example` to `backend/.env`, make sure `PORT=5000` (or update `VITE_SOCKET_URL` to match).
+
+### Code judging (client-side)
+
+To keep setup simple and avoid running untrusted code on the server, user code is executed and tested **in the browser** (Pyodide / WebAssembly). The client sends pass/fail results to the backend to advance the game.
 
 ## Running the Application
 
@@ -93,15 +99,39 @@ For the full commit history, visit https://github.com/moromorad/NewCodeBattles (
 
 1. Start the backend server (in `backend/` directory):
    ```bash
+   # (Optional) activate venv first
+   venv\Scripts\activate
+
    python app.py
    ```
 
 2. Start the frontend server (in `frontend/` directory):
    ```bash
+   npm install
    npm run dev
    ```
 
 3. Open your browser to `http://localhost:5173`
+
+### Quick start (Windows)
+
+In two terminals:
+
+Terminal 1 (backend):
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
+```
+
+Terminal 2 (frontend):
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ### Network Access (Same Wi-Fi)
 
